@@ -7,7 +7,7 @@ var yaml = require('js-yaml');
 var fs = require('fs');
 var sys = require('sys');
 var exec = require('child_process').exec;
-var handleMe = require('./handleMe');
+var handler = require('./handler').handler;
 
 // Configure express app
 var app = express();
@@ -15,19 +15,28 @@ app.use(bodyParser.json());
 
 // Load config
 config = yaml.safeLoad(fs.readFileSync(__dirname + '/conf/steve.yaml', 'utf-8'));
-console.log(config);
+// DEBUG: console.log(config);
+
+function send_400(res, msg){
+	console.log(msg);
+	res.sendStatus(400);
+}
 
 // Handle all requests to /steve/
-app.post("/steve/", function(req, res) {
-
-	// Diagnostics - Print out the request body
-	console.log(req.body);
+app.post("/steve/:handler", function(req, res) {
+	// DEBUG: console.log(req.body);
 
 	// Route
-	var repo_name = handleMe(req.url, req.body);
-	console.log(repo_name);
-	var repo = config[repo_name];
-	console.log(repo);
+	var payload = handler(req.params.handler, req.body);
+	if(!payload){
+		send_400(res, "Received an invalid handler (" + req.params.handler + ") or payload.");
+		return;
+	}
+	var repo = config[payload.name];
+	if(!repo){
+		send_400(res, "No repository by name of '" + payload.name + "' found.");
+		return;
+	}
 	var cmd = 'pushd ' + repo.path;
 
 	// Construct command string
@@ -40,6 +49,7 @@ app.post("/steve/", function(req, res) {
 		cmd += ' && git pull';
 	} else {
 		console.log(repo.method + " is not a suitable update method. Check configuration file.");
+		res.sendStatus(400);
 		return;
 	}
 
@@ -55,8 +65,10 @@ app.post("/steve/", function(req, res) {
 		if(error !== null) {
 			console.log("exec error: " + error);
 		}
+		res.sendStatus(200);
 	});
 
+	
 });
 
 app.listen(8888);
