@@ -7,7 +7,7 @@ var yaml = require('js-yaml');
 var fs = require('fs');
 var sys = require('sys');
 var exec = require('child_process').exec;
-var handleMe = require('handleMe');
+var handleMe = require('./handleMe');
 
 // Configure express app
 var app = express();
