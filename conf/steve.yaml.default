@@ -1,0 +1,11 @@
+%YAML 1.2
+---
+
+my_repo:
+  path: '/path/to/my/repo'
+  method: 'manual'
+  branch: 'master'
+
+my_other_repo:
+  path: '/path/to/my/other/repo'
+  method: 'puppet'
