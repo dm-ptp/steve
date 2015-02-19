@@ -54,7 +54,7 @@ app.post("/steve/:handler", function(req, res) {
 	}
 
 	// DEBUG - wrap cmd in 'echo' so we don't muss with things locally
-	cmd = 'echo "' + cmd + '"';
+	// cmd = 'echo "' + cmd + '"';
 	console.log("cmd: " + cmd);
 
 	// Execute command
