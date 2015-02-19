@@ -58,6 +58,7 @@ app.post("/steve/:handler", function(req, res) {
 	console.log("cmd: " + cmd);
 
 	// Execute command
+	// TODO: Use spawn instead of exec
 	var child = exec(cmd, function(error, stdout, stderr) {
 		sys.print("stdout: " + stdout);
 		sys.print("stderr: " + stderr);
